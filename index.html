@@ -170,7 +170,7 @@ footer{background:var(--azul);padding:40px 24px;border-top:3px solid var(--naran
 .drawer-close:hover{background:rgba(255,255,255,.35)}
 .drawer-items{flex:1;overflow-y:auto;padding:16px}
 .cart-empty{text-align:center;padding:60px 20px;color:var(--muted)}
-.cart-empty .ei{font-size:56px;margin-bottom:14px}
+.cart-empty .ei{font-size:px;margin-bottom:14px}
 .cart-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--borde)}
 .ci-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .ci-body{flex:1;min-width:0}
@@ -204,7 +204,7 @@ footer{background:var(--azul);padding:40px 24px;border-top:3px solid var(--naran
 /* ── Modal Checkout ──────────────────────────────────────── */
 .modal-back{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:800;display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
 .modal-back.open{display:flex}
-.modal{background:#fff;border-radius:var(--r2);width:min(560px,100%);max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.2)}
+.modal{background:#fff;border-radius:var(--r2);width:min(0px,100%);max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.2)}
 .modal-head{padding:22px 28px;background:linear-gradient(135deg,var(--rojo),var(--naranja));display:flex;align-items:center;justify-content:space-between;border-radius:var(--r2) var(--r2) 0 0}
 .modal-head h3{color:#fff;font-family:'Playfair Display',serif;font-size:20px}
 .modal-x{background:rgba(255,255,255,.2);border:none;color:#fff;width:34px;height:34px;border-radius:10px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--trans)}
@@ -355,7 +355,7 @@ footer{background:var(--azul);padding:40px 24px;border-top:3px solid var(--naran
     </div>
     <div class="contacto-grid">
       <div class="contacto-card"><div class="cc-icon">📍</div><div class="cc-title">Dirección</div><div class="cc-val">Santiago, Chile</div></div>
-      <div class="contacto-card"><div class="cc-icon">📞</div><div class="cc-title">Teléfono</div><div class="cc-val">+56 2 2245 678</div></div>
+      <div class="contacto-card"><div class="cc-icon">📞</div><div class="cc-title">Teléfono</div><div class="cc-val">+ 2 2245 678</div></div>
     </div>
     <div style="text-align:center">
       <button class="btn-fire" onclick="waChat()">📲 Escribir por WhatsApp</button>
@@ -371,7 +371,7 @@ footer{background:var(--azul);padding:40px 24px;border-top:3px solid var(--naran
       <span class="footer-name">La <em>Tiendita</em> Venezolana</span>
     </div>
     <div class="footer-social">
-      <a class="soc-btn soc-wa" href="https://wa.me/56922456789" target="_blank">
+      <a class="soc-btn soc-wa" href="https://wa.me/9224789" target="_blank">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         WhatsApp
       </a>
@@ -380,7 +380,7 @@ footer{background:var(--azul);padding:40px 24px;border-top:3px solid var(--naran
         Instagram
       </a>
     </div>
-    <p class="footer-copy">© 2025 La Tiendita Venezolana · Santiago, Chile · +56 2 2245 678</p>
+    <p class="footer-copy">© 2025 La Tiendita Venezolana · Santiago, Chile · + 2 2245 678</p>
   </div>
 </footer>
 
@@ -441,7 +441,7 @@ footer{background:var(--azul);padding:40px 24px;border-top:3px solid var(--naran
       </div>
       <div class="form-2col">
         <div class="form-grp"><label class="form-lbl">Nombre *</label><input class="form-inp" id="fNombre" type="text" placeholder="Tu nombre completo" autocomplete="name"></div>
-        <div class="form-grp"><label class="form-lbl">Teléfono *</label><input class="form-inp" id="fTel" type="tel" placeholder="+56 9 1234 5678" autocomplete="tel"></div>
+        <div class="form-grp"><label class="form-lbl">Teléfono *</label><input class="form-inp" id="fTel" type="tel" placeholder="+56 9 3566 1833" autocomplete="tel"></div>
       </div>
       <div class="form-grp"><label class="form-lbl">Email (para comprobante PDF)</label><input class="form-inp" id="fEmail" type="email" placeholder="tu@email.com" autocomplete="email"></div>
 
@@ -782,8 +782,8 @@ function toggleCart()        { document.getElementById("cartOverlay").classList.
 function closeCartOutside(e) { if(e.target===document.getElementById("cartOverlay")) toggleCart(); }
 function closeModal()        { document.getElementById("modalBack").classList.remove("open"); }
 function goto(sel)           { document.querySelector(sel)?.scrollIntoView({behavior:"smooth",block:"start"}); }
-function waChat()            { window.open("https://wa.me/56922456789?text="+encodeURIComponent("Hola, quiero hacer un pedido 🍽️"),"_blank"); }
-function waTrack()           { window.open("https://wa.me/56922456789?text="+encodeURIComponent("Hola, consulta sobre mi pedido "+pedidoConfirmadoID),"_blank"); }
+function waChat()            { window.open("https://wa.me/56935661833?text="+encodeURIComponent("Hola, quiero hacer un pedido 🍽️"),"_blank"); }
+function waTrack()           { window.open("https://wa.me/56935661833?text="+encodeURIComponent("Hola, consulta sobre mi pedido "+pedidoConfirmadoID),"_blank"); }
 function showLoader(show, txt) {
   const l = document.getElementById("loader");
   if (show) { l.classList.remove("hide"); if(txt) l.querySelector(".loader-txt").textContent=txt; }
