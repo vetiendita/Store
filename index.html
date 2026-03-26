@@ -441,7 +441,7 @@ footer{background:var(--azul);padding:40px 24px;border-top:3px solid var(--naran
       </div>
       <div class="form-2col">
         <div class="form-grp"><label class="form-lbl">Nombre *</label><input class="form-inp" id="fNombre" type="text" placeholder="Tu nombre completo" autocomplete="name"></div>
-        <div class="form-grp"><label class="form-lbl">Teléfono *</label><input class="form-inp" id="fTel" type="tel" placeholder="+56 9 3566 1833" autocomplete="tel"></div>
+        <div class="form-grp"><label class="form-lbl">Teléfono *</label><input class="form-inp" id="fTel" type="tel" placeholder="+56 9 3566 1883" autocomplete="tel"></div>
       </div>
       <div class="form-grp"><label class="form-lbl">Email (para comprobante PDF)</label><input class="form-inp" id="fEmail" type="email" placeholder="tu@email.com" autocomplete="email"></div>
 
@@ -782,8 +782,8 @@ function toggleCart()        { document.getElementById("cartOverlay").classList.
 function closeCartOutside(e) { if(e.target===document.getElementById("cartOverlay")) toggleCart(); }
 function closeModal()        { document.getElementById("modalBack").classList.remove("open"); }
 function goto(sel)           { document.querySelector(sel)?.scrollIntoView({behavior:"smooth",block:"start"}); }
-function waChat()            { window.open("https://wa.me/56935661833?text="+encodeURIComponent("Hola, quiero hacer un pedido 🍽️"),"_blank"); }
-function waTrack()           { window.open("https://wa.me/56935661833?text="+encodeURIComponent("Hola, consulta sobre mi pedido "+pedidoConfirmadoID),"_blank"); }
+function waChat()            { window.open("https://wa.me/56935661883?text="+encodeURIComponent("Hola, quiero hacer un pedido 🍽️"),"_blank"); }
+function waTrack()           { window.open("https://wa.me/56935661883?text="+encodeURIComponent("Hola, consulta sobre mi pedido "+pedidoConfirmadoID),"_blank"); }
 function showLoader(show, txt) {
   const l = document.getElementById("loader");
   if (show) { l.classList.remove("hide"); if(txt) l.querySelector(".loader-txt").textContent=txt; }
