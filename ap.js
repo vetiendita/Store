@@ -10,7 +10,7 @@
 (() => {
   // Cambia esta URL por la de tu Web App desplegada (Apps Script → Deploy → Web app)
   // Debe ser tipo: https://script.google.com/macros/s/<ID>/exec
-  const GAS_WEBAPP_URL = window.GAS_WEBAPP_URL || "https://script.google.com/macros/s/AKfycby-oCvdlGWkFJaepMz5BKExa1mfVAhiW1Jg5wC5ry_qTNDRqntT10ijBAcPiX3Mpl_szQ/exec";
+  const GAS_WEBAPP_URL = window.GAS_WEBAPP_URL || "https://script.google.com/macros/s/AKfycbz506DsTFsdLLPi2n7AJNv8JGQilHB9kLKv7gUvVIHJ__xtNYG_7jWxlE5vFStFZj8OiA/exec";
   const GAS_API_TOKEN = window.GAS_API_TOKEN || "estonoesunaprueba01";
 
   function buildQuery_(obj) {
