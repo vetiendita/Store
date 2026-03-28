@@ -1,126 +1,138 @@
 /* =========================================================================
-   ap.js v3 — JSONP bridge para GitHub Pages → Google Apps Script
-   Sin CORS, sin fetch, 100% compatible con GH Pages estático.
+   AP / STUB for Apps Script calls (google.script.run) using fetch()
+   Compatible con GitHub Pages.
+
+   Usage:
+   1) Set GAS_WEBAPP_URL to your deployed Apps Script Web App URL.
+   2) Keep existing code that calls google.script.run...
    ========================================================================= */
+
 (() => {
-  const GAS_URL = (window.GAS_WEBAPP_URL && window.GAS_WEBAPP_URL.trim())
-    ? window.GAS_WEBAPP_URL.trim()
-    : "";
+  // Cambia esta URL por la de tu Web App desplegada (Apps Script → Deploy → Web app)
+  // Debe ser tipo: https://script.google.com/macros/s/<ID>/exec
+  const GAS_WEBAPP_URL = window.GAS_WEBAPP_URL || "https://script.google.com/macros/s/AKfycby-oCvdlGWkFJaepMz5BKExa1mfVAhiW1Jg5wC5ry_qTNDRqntT10ijBAcPiX3Mpl_szQ/exec";
+  const GAS_API_TOKEN = window.GAS_API_TOKEN || "estonoesunaprueba01";
 
-  if (!GAS_URL) { console.error("ap.js: window.GAS_WEBAPP_URL no definida"); }
-
-  let _cbId = 0;
-  const _pending = {};
-
-  // Receptor global de respuestas JSONP
-  window.__gasCallback = function(cbId, data) {
-    if (_pending[cbId]) { _pending[cbId](data); delete _pending[cbId]; }
-  };
-
-  function jsonpCall(url) {
-    return new Promise((resolve, reject) => {
-      const id = "cb" + (++_cbId) + "_" + Date.now();
-      _pending[id] = resolve;
-      const s = document.createElement("script");
-      s.src = url + (url.includes("?") ? "&" : "?") + "callback=__gasCallback&callbackId=" + id;
-      s.onload  = () => { try { s.parentNode.removeChild(s); } catch(e){} };
-      s.onerror = () => {
-        try { s.parentNode.removeChild(s); } catch(e){}
-        delete _pending[id];
-        reject(new Error("JSONP request failed"));
-      };
-      document.head.appendChild(s);
-      setTimeout(() => {
-        if (_pending[id]) {
-          delete _pending[id];
-          reject(new Error("JSONP timeout (20s)"));
-        }
-      }, 20000);
-    });
-  }
-
-  function qs(obj) {
-    return Object.entries(obj)
-      .filter(([,v]) => v !== undefined && v !== null && v !== "")
-      .map(([k,v]) => encodeURIComponent(k) + "=" + encodeURIComponent(String(v)))
+  function buildQuery_(obj) {
+    return Object.keys(obj)
+      .filter(k => obj[k] !== undefined && obj[k] !== null && obj[k] !== "")
+      .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(String(obj[k])))
       .join("&");
   }
 
-  function get(api, params) {
-    return jsonpCall(GAS_URL + "?" + qs({ api, ...params }));
+  async function fetchJSON_(url, options) {
+    const res = await fetch(url, options);
+    const txt = await res.text();
+    try {
+      return JSON.parse(txt);
+    } catch (e) {
+      // Si Apps Script devolvió HTML/otro en error, igual devolvemos algo útil.
+      return { ok: false, error: txt || String(e) };
+    }
   }
 
-  function post(api, body) {
-    return jsonpCall(GAS_URL + "?" + qs({ api, _data: JSON.stringify(body) }));
+  function callApiGet_(action, query) {
+    const qs = buildQuery_({ api: action, token: GAS_API_TOKEN, ...(query || {}) });
+    const url = GAS_WEBAPP_URL + "?" + qs;
+    return fetchJSON_(url, { method: "GET" });
   }
 
-  // API pública
-  window.GAS = {
-    getCatalogo:        ()          => get("catalogo"),
-    getPedidos:         (limite=50) => get("pedidos", { limite }),
-    getPedido:          (id)        => get("pedido", { id }),
-    getClientes:        ()          => get("clientes"),
-    getMetricas:        ()          => get("metricas"),
-    validarDescuento:   (codigo)    => get("validarDescuento", { codigo }),
-    crearPedido:        (payload)   => post("crearPedido", payload),
-    actualizarEstado:   (id,estado) => post("actualizarEstado", { id, estado }),
-    reabastecerStock:   (id,cant)   => post("reabastecerStock", { id, cantidad: cant }),
-  };
+  function callApiPost_(action, body) {
+    const url = GAS_WEBAPP_URL + "?" + buildQuery_({ api: action, token: GAS_API_TOKEN });
+    return fetchJSON_(url, {
+      method: "POST",
+      // Usar text/plain evita preflight OPTIONS por CORS.
+      headers: { "Content-Type": "text/plain;charset=UTF-8" },
+      body: JSON.stringify(body || {})
+    });
+  }
 
-  // Compatibilidad con código anterior que usa google.script.run
-  class GasCall {
-    constructor() { this._sh = null; this._fh = null; }
-    withSuccessHandler(fn) { this._sh = fn; return this._proxy(); }
-    withFailureHandler(fn) { this._fh = fn; return this._proxy(); }
-    _proxy() {
-      const sh = this._sh, fh = this._fh;
-      return new Proxy({}, {
-        get(_, prop) {
-          return (...args) => {
-            const map = {
-              getCatalogo:            () => GAS.getCatalogo(),
-              getInventario:          () => GAS.getCatalogo(), // alias
-              getPedidosRecientes:    () => GAS.getPedidos(args[0]),
-              getDashboardMetricas:   () => GAS.getMetricas(),
-              getClientesParaDashboard:()=> GAS.getClientes(),
-              crearPedido:            () => GAS.crearPedido(args[0]),
-              actualizarEstadoConPDF: () => GAS.actualizarEstado(args[0], args[1]),
-              validarDescuento:       () => GAS.validarDescuento(args[0]),
-              reabastecerStock:       () => GAS.reabastecerStock(args[0], args[2]),
-            };
-            const fn = map[prop] || (() => GAS.getCatalogo());
-            fn().then(res => { if(sh) sh(res); }).catch(err => { if(fh) fh(err); });
-          };
-        }
+  // Mapeo: nombre de función (como la llama el frontend) -> endpoint API
+  function dispatch_(fnName, args) {
+    const name = String(fnName || "").trim();
+
+    // GET
+    if (name === "getCatalogo") return callApiGet_("catalogo", {});
+    if (name === "getInventario") return callApiGet_("inventario", {});
+    if (name === "getPedidosRecientes") return callApiGet_("pedidosRecientes", { limite: args[0] });
+    if (name === "getPedidoPorID") return callApiGet_("pedidoPorID", { id: args[0] });
+    if (name === "getClientesParaDashboard") return callApiGet_("clientesDashboard", {});
+    if (name === "getDashboardMetricas") return callApiGet_("dashboardMetricas", {});
+    if (name === "generarReporteMensual") return callApiGet_("generarReporteMensual", { mes: args[0], anio: args[1] });
+    if (name === "validarDescuento") return callApiGet_("validarDescuento", { codigo: args[0] });
+
+    // POST
+    if (name === "crearPedido") return callApiPost_("crearPedido", args[0]);
+    if (name === "actualizarEstadoConPDF") {
+      return callApiPost_("actualizarEstadoConPDF", {
+        pedidoID: args[0],
+        nuevoEstado: args[1],
+        enviarPDF: args[2]
       });
     }
+    if (name === "reabastecerStock") {
+      return callApiPost_("reabastecerStock", {
+        categoria: args[0],
+        id: args[1],
+        cantidad: args[2]
+      });
+    }
+    if (name === "exportarReportePDF") {
+      return callApiPost_("exportarReportePDF", { mes: args[0], anio: args[1] });
+    }
+
+    return Promise.resolve({ ok: false, error: "Function not mapped in ap.js: " + name });
   }
 
-  const runStub = new Proxy({}, {
-    get(_, prop) {
-      const c = new GasCall();
-      if (prop === "withSuccessHandler") return fn => { c._sh=fn; return c._proxy(); };
-      if (prop === "withFailureHandler") return fn => { c._fh=fn; return c._proxy(); };
-      return (...args) => {
-        const map = {
-          getCatalogo:            () => GAS.getCatalogo(),
-          getInventario:          () => GAS.getCatalogo(),
-          getPedidosRecientes:    () => GAS.getPedidos(args[0]),
-          getDashboardMetricas:   () => GAS.getMetricas(),
-          getClientesParaDashboard:()=> GAS.getClientes(),
-          crearPedido:            () => GAS.crearPedido(args[0]),
-          actualizarEstadoConPDF: () => GAS.actualizarEstado(args[0], args[1]),
-          validarDescuento:       () => GAS.validarDescuento(args[0]),
-          reabastecerStock:       () => GAS.reabastecerStock(args[0], args[2]),
-        };
-        (map[prop]||(() => GAS.getCatalogo()))();
-      };
-    }
-  });
+  // Stub de google.script.run con la API de encadenamiento original:
+  // google.script.run.withSuccessHandler(fn).withFailureHandler(fn).getCatalogo()
+  function createGoogleScriptRunStub() {
+    let successHandler = null;
+    let failureHandler = null;
 
+    const runnerProxy = new Proxy(
+      {},
+      {
+        get(_target, prop) {
+          if (prop === "withSuccessHandler") {
+            return (fn) => {
+              successHandler = fn;
+              return runnerProxy;
+            };
+          }
+          if (prop === "withFailureHandler") {
+            return (fn) => {
+              failureHandler = fn;
+              return runnerProxy;
+            };
+          }
+
+          // prop es el nombre de la función a ejecutar.
+          return (...args) => {
+            const fnName = prop;
+            return dispatch_(fnName, args)
+              .then((res) => {
+                if (successHandler) successHandler(res);
+                successHandler = null;
+                failureHandler = null;
+                return res;
+              })
+              .catch((err) => {
+                if (failureHandler) failureHandler(err);
+                successHandler = null;
+                failureHandler = null;
+              });
+          };
+        }
+      }
+    );
+
+    return runnerProxy;
+  }
+
+  // Creamos el namespace esperado por tu frontend (si no existe)
   if (!window.google) window.google = {};
   if (!window.google.script) window.google.script = {};
-  window.google.script.run = runStub;
-
-  console.log("ap.js v3 listo. URL:", GAS_URL);
+  window.google.script.run = createGoogleScriptRunStub();
 })();
+
